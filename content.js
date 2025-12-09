@@ -7,10 +7,9 @@ let isHidingEnabled = true;
 
 // 1. Initialize: Load settings from storage
 chrome.storage.local.get(['hidingEnabled'], (result) => {
-    if (result.hidingEnabled !== undefined) {
-        isHidingEnabled = result.hidingEnabled;
-    }
-    // Run immediately on load
+    // Default to true if undefined
+    isHidingEnabled = result.hidingEnabled !== undefined ? result.hidingEnabled : true;
+
     if (isHidingEnabled) {
         hideViewedJobs();
     }
@@ -56,24 +55,14 @@ const observer = new MutationObserver((mutations) => {
         return;
     }
 
-    let shouldRun = false;
-    for (const mutation of mutations) {
-        if (mutation.addedNodes.length > 0) {
-            shouldRun = true;
-            break;
-        }
-    }
-
-    if (shouldRun) {
+    const hasAddedNodes = mutations.some(m => m.addedNodes.length > 0);
+    if (hasAddedNodes) {
         hideViewedJobs();
     }
 });
 
 // Start observing the body for changes
-observer.observe(document.body, {
-    childList: true,
-    subtree: true
-});
+observer.observe(document.body, { childList: true, subtree: true });
 
 // 5. Listen for messages from the popup (Toggle switch)
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
