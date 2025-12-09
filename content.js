@@ -26,7 +26,7 @@ function hideViewedJobs() {
 
     footerItems.forEach((item) => {
         // Check strict text match (trimming whitespace)
-        if (item.innerText.trim() === "Viewed") {
+        if (item.innerText.trim() === "Viewed" || item.innerText.trim() === "Applied") {
             // Traverse up to find the main job card container
             const jobCard = item.closest(CARD_SELECTOR);
 
